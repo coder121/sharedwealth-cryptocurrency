@@ -46,4 +46,9 @@ public class Transaction {
 	public void setSenderPk(String senderPk) {
 		this.senderPk = senderPk;
 	}
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return getSenderPk()+":"+getAmount()+":"+getReceiverPk();
+	}
 }

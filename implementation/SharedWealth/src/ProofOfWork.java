@@ -1,8 +1,6 @@
 import java.security.SecureRandom;
 import java.util.Random;
 
-import javax.security.sasl.AuthenticationException;
-
 import org.apache.commons.codec.binary.Hex;
 
 public class ProofOfWork {
