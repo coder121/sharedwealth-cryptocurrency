@@ -18,6 +18,7 @@ public class ProofOfWork {
 	private void compute(Block b) {
 
 		String n = getNonce();
+		System.out.println("Nonce:"+n);
 
 	}
 
