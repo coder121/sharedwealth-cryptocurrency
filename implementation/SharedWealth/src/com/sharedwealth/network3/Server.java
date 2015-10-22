@@ -289,11 +289,21 @@ public class Server {
 			}
 			// write the message to the stream
 			try {
-//				for(Transaction t:transactions){
-//					sOutput.writeObject(t.getAmount()+","+t.getReceiverPk());
-//				}
-				sOutput.writeObject(msg);
-				sOutput.writeObject("Size:"+transactions.size());
+				String recvKey=t.getReceiverPk();
+				display("recvKey:"+recvKey);
+				for(Transaction t:transactions){
+					display(recvKey+"="+t.getSenderPk());
+					if(recvKey.equals(t.getSenderPk())){
+					
+					sOutput.writeObject(t.getAmount()+","+t.getReceiverPk());
+				}
+					else{
+						sOutput.writeObject("Nope");
+						
+					}
+				}
+//				sOutput.writeObject(msg);
+//				sOutput.writeObject("Size:"+transactions.size());
 			}
 			// if an error occurs, do not abort just inform the user
 			catch(IOException e) {
