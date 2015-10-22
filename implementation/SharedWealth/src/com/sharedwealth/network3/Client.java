@@ -160,7 +160,7 @@ public class Client  {
 		int portNumber = 1500;
 		String serverAddress = "localhost";
 		String userName = "two";
-		Transaction t=new Transaction("daa", 300);
+		Transaction t=new Transaction("ca", 3);
 
 		// depending of the number of arguments provided we fall through
 	/*	switch(args.length) {
