@@ -1,5 +1,7 @@
 import java.util.ArrayList;
 
+import com.sharedwealth.transaction.Transaction;
+
 public class Block {
 	private final String MaginNo = "0xD9B4BEF9";
 	private double blockSize;

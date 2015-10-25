@@ -1,9 +1,10 @@
-package com.sharedwealth.network3;
+package com.sharedwealth.network4;
 
 import java.net.*;
 import java.io.*;
 import java.util.*;
 
+import com.sharedwealth.demo.User;
 import com.sharedwealth.transaction.Transaction;
 
 /*
@@ -18,7 +19,7 @@ public class Client  {
 
 	private String server, username;
 	private int port;
-	private Transaction t;
+	private User user;
 	/*
 	 *  Constructor called by console mode
 	 *  server: the server address
@@ -27,10 +28,10 @@ public class Client  {
 	 *  transaction:the transaction
 	 */
 
-	Client(String server, int port,Transaction t) {
+	Client(String server, int port,User u) {
 		this.server = server;
 		this.port = port;
-		this.t=t;
+		this.user=u;
 		
 		
 	
@@ -68,15 +69,7 @@ public class Client  {
 		new ListenFromServer().start();
 		// Send our username to the server this is the only message that we
 		// will send as a String. All other messages will be ChatMessage objects
-		try
-		{
-			sOutput.writeObject(username);
-		}
-		catch (IOException eIO) {
-			display("Exception doing login : " + eIO);
-			disconnect();
-			return false;
-		}
+		
 		// success we inform the caller that it worked
 		return true;
 	}
@@ -94,32 +87,14 @@ public class Client  {
 	/*
 	 * To send a message to the server
 	 */
-	void sendMessage(ChatMessage m) {
-		try {
-			sOutput.writeObject(m);
-		}
-		catch(IOException e) {
-			display("Exception writing to server: " + e);
-		}
-	}
-	/**
-	 * Send a transaction
-	 * @param t
-	 */
-	void sendTransaction(Transaction t) {
-		try {
-			sOutput.writeObject(t);
-		}
-		catch(IOException e) {
-			display("Exception writing to server: " + e);
-		}
-	}
+	
+	
 
 	/*
 	 * When something goes wrong
 	 * Close the Input/Output streams and disconnect not much to do in the catch clause
 	 */
-	private void disconnect() {
+/*	private void disconnect() {
 		try { 
 			if(sInput != null) sInput.close();
 		}
@@ -136,61 +111,20 @@ public class Client  {
 		// inform the GUI
 	
 			
-	}
-	/*
-	 * To start the Client in console mode use one of the following command
-	 * > java Client
-	 * > java Client username
-	 * > java Client username portNumber
-	 * > java Client username portNumber serverAddress
-	 * at the console prompt
-	 * If the portNumber is not specified 1500 is used
-	 * If the serverAddress is not specified "localHost" is used
-	 * If the username is not specified "Anonymous" is used
-	 * > java Client 
-	 * is equivalent to
-	 * > java Client Anonymous 1500 localhost 
-	 * are eqquivalent
-	 * 
-	 * In console mode, if an error occurs the program simply stops
-	 * when a GUI id used, the GUI is informed of the disconnection
-	 */
+	}*/
+	
 	public static void main(String[] args) throws FileNotFoundException {
 		// default values
 		int portNumber = 1500;
 		String serverAddress = "localhost";
-		String userName = "two";
-		Transaction t=new Transaction("bc","21", 2);
+//		String userName = "two";
+//		Transaction t=new Transaction("bc", 2);
+		User alice=new User();
+		alice.createTransaction("bca", alice.getAddress(), 10);
 
-		// depending of the number of arguments provided we fall through
-	/*	switch(args.length) {
-			// > javac Client username portNumber serverAddr
-			case 3:
-			
-
-			// > javac Client username portNumber
-			case 2:
-				try {
-					portNumber = Integer.parseInt(args[1]);
-				}
-				catch(Exception e) {
-					System.out.println("Invalid port number.");
-					System.out.println("Usage is: > java Client [username] [portNumber] [serverAddress]");
-					return;
-				}
-			// > javac Client username
-			case 1: 
-				userName = args[0];
-			// > java Client
-			case 0:
-				break;
-			// invalid number of arguments
-			default:
-				System.out.println("Usage is: > java Client [username] [portNumber] {serverAddress]");
-			return;
-		}*/
+	
 		// create the Client object
-		Client client = new Client(serverAddress, portNumber, t);
+		Client client = new Client(serverAddress, portNumber, alice);
 		// test if we can start the connection to the Server
 		// if it failed nothing we can do
 		if(!client.start())
@@ -200,29 +134,28 @@ public class Client  {
 		Scanner scan = new Scanner(System.in);
 //		BufferedReader in=new BufferedReader(new InputStreamReader(socke))
 		// loop forever for message from the user
-		while(true) {
+		
 			System.out.print("> ");
 			// read message from user
 			String msg = scan.nextLine();
 			// logout if message is LOGOUT
-			client.sendTransaction(t);
-			if(msg.equalsIgnoreCase("LOGOUT")) {
-				client.sendMessage(new ChatMessage(ChatMessage.LOGOUT, "",1));
-				// break to do the disconnect
-				break;
-			}
-			// message WhoIsIn
-			else if(msg.equalsIgnoreCase("WHOISIN")) {
-				client.sendMessage(new ChatMessage(ChatMessage.WHOISIN, "",2));				
-			}
-			else {				// default to ordinary message
-//				client.sendMessage(new ChatMessage(ChatMessage.MESSAGE, msg,3));
-				
-				
-			}
-		}
+		
+			client.connect(alice);
+			
+			
+		
 		// done disconnect
-		client.disconnect();	
+		
+	}
+
+	private void connect(User alice) {
+	try {
+		sOutput.writeObject(alice);
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+		
 	}
 
 	/*

@@ -11,16 +11,29 @@ public class Transaction implements java.io.Serializable {
 	private String senderPk;
 	private String receiverPk;
 	private double amount;
-	transient Scanner in;
 
-	public Transaction(String receiverPK, double amount)  throws FileNotFoundException {
-		in=new Scanner(new File("info.txt"));//file containing public key and amount
+
+	public Transaction(String receiverPK, String senderPk,double amount)  throws FileNotFoundException {
+
 		this.receiverPk = receiverPK;
 		this.amount = amount;
-		this.senderPk = in.next();
+		this.senderPk=senderPk;
+		
 		this.listofInput = 1;
 		this.listofOutputs = 1;
 	}
+	public Transaction() {
+		// TODO Auto-generated constructor stub
+	}
+	/**
+	 * This is another constructor that basically assigns 
+	 * the senderAddress
+	 * This is used to connect to the server 
+	 * and make server aware of your existence
+	 *  
+	 * 
+	 */
+
 
 	public String getSenderPk() {
 		return senderPk;
@@ -57,6 +70,6 @@ public class Transaction implements java.io.Serializable {
 	@Override
 	public String toString() {
 		// TODO Auto-generated method stub
-		return getSenderPk()+":"+getAmount()+":"+getReceiverPk();
+		return "SenderPubKey:"+getSenderPk()+"\nReceiverPubKey:"+getReceiverPk()+"\nAmount:"+getAmount();
 	}
 }

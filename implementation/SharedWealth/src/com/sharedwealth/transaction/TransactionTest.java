@@ -12,7 +12,7 @@ public class TransactionTest {
 	@Test
 	public void setTransactionTest() throws FileNotFoundException {
 
-		Transaction t = new Transaction("aras", 1);
+		Transaction t = new Transaction("aras","abas", 1);
 		 List<Integer> lst = new LinkedList<Integer>();
 		 for (int i = 1; i <= 5; i++) lst.add(i);
 		 System.out.println(lst);
@@ -22,5 +22,6 @@ public class TransactionTest {
 		
 
 	}
+
 
 }

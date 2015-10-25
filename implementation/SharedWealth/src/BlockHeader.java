@@ -4,6 +4,8 @@ import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.TimeZone;
+
+import com.sharedwealth.transaction.Transaction;
  
  
 public class BlockHeader {
