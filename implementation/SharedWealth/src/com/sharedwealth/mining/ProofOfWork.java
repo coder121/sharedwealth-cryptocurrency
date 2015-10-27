@@ -1,5 +1,6 @@
 package com.sharedwealth.mining;
 
+import java.io.Serializable;
 import java.lang.annotation.Target;
 
 import com.sharedwealth.util.Util;
@@ -8,9 +9,9 @@ import com.sharedwealth.util.Util;
  * @author Siddiq Ahmed Syed
  *
  */
-public class ProofOfWork {
+public class ProofOfWork implements Serializable {
 	
-	static int difficulty=1;//This specify the target
+	public static int difficulty=2;//This specify the target
 	static int resultantNonce=0;
 
 	
@@ -39,17 +40,18 @@ public static int getNonce() {
 		int nonce=0;
 	    Boolean flag=true;
 	    Boolean found=false;
+	    String result="";
 	    while(flag){		
 	    String newHeader=header+nonce;
 	    
 		//String result=Util.getDoubleHash(newHeader);
-	    String result=Util.getHash(newHeader);
+	   result=Util.getHash(newHeader);
 	    
 	    
 		if(result.startsWith(getTarget())){
 			double stopTime=System.currentTimeMillis();
 			double elapsedTime=stopTime-startTime;//finding the totalTime
-			System.out.println("Solution:\n"+"Nonce:"+nonce+"\nResult:"+result);
+			System.out.println("DifficultLevel:"+difficulty+"\nSolution:\n"+"Nonce:"+nonce+"\nResult:"+result);
 			System.out.println("Elapsed Time:"+(elapsedTime/1000)+"s");
 			flag=false;
 			resultantNonce=nonce;
@@ -57,7 +59,8 @@ public static int getNonce() {
 		}
 		nonce++;
 	    }
-	   return null;
+	  
+	return "Solution:\n"+"Nonce:"+nonce+"\nResult:"+result;
 		
 	}
 	/**
@@ -73,6 +76,11 @@ public static int getNonce() {
 	//System.out.println("Target:"+targetString);
 	return targetString;
 }
+	
+	public int getDifficultLevel(){
+		return difficulty;
+		
+	}
 	/**
 	 * This method is to verify the work done by the miner. 
 	 * It verifies whether the solution found by the miner is valid
