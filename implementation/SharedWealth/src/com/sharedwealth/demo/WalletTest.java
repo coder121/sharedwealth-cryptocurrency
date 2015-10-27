@@ -9,13 +9,13 @@ import org.bitcoinj.core.Wallet;
 import org.bitcoinj.core.Wallet.*;
 
 
-public class WalletBit {
+public class WalletTest {
 	final  NetworkParameters netParams=NetworkParameters.testNet() ;
 	private  Wallet wallet = null;
 	 final File walletFile=new File("test.wallet");
 	 ECKey key;
 	 
-	 public WalletBit() throws IOException {
+	 public WalletTest() throws IOException {
 		// TODO Auto-generated constructor stub
 		  wallet = new Wallet(netParams);
 		 for (int i=0;i<5;i++){

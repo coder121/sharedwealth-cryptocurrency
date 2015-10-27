@@ -12,25 +12,25 @@ import org.bitcoinj.core.ECKey;
 import org.bitcoinj.core.NetworkParameters;
 
 import com.sharedwealth.transaction.Transaction;
+import com.sharedwealth.util.Util;
 
 
-public class User extends Transaction implements Serializable {
+public class User2 implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-private Address bitcoinAddress;//this is the bitcoin Address
-private ECKey key;
+
 private File wallet;
 transient Scanner in;
 private String address;
 private double amount;
 transient FileWriter fw;
 private boolean receiver;//this is to indentify if there is a receiver
+private Transaction t;
 
 
 
-public User(String walletName)  {
-	super();
-
+public User2(String walletName)  {
+	
 	wallet=new File(walletName);
 	//this tells if the user is an existing bitcoin user.
 	if(wallet.exists()){
@@ -62,10 +62,8 @@ public void setReceiverFlag(boolean flag) {
 private void createWallet() {
 	try {
 		 fw=new FileWriter(wallet);
-		key=new ECKey();
-		NetworkParameters params=NetworkParameters.prodNet();
-		bitcoinAddress=key.toAddress(params);
-		String address=bitcoinAddress.toString();
+		
+		String address=Util.generateAddress();
 		setAddress(address);
 		fw.write(address);
 		setAmount(0.0);
@@ -83,16 +81,14 @@ public void setAmount(double amnt) {
  this.amount=amnt;
  }
 
-public Address getBitcoinAddress() {
-	return bitcoinAddress;
-}
+
 
 public String getAddress() {
 	return address;
 }
 
 public void setAddress(String address) {
-	super.setSenderPk(address);
+	
 	this.address = address;
 }
 
@@ -105,11 +101,27 @@ public boolean hasReceiverKey(){
 }
 
 public void createTransaction(String receiverPubKey,String senderPubKey,double amnt) throws FileNotFoundException{
+	t=new Transaction(receiverPubKey, senderPubKey, amnt);
 	setReceiverFlag(true);
-	super.setReceiverPk(receiverPubKey);
-	super.setAmount(amnt);
-	super.setSenderPk(senderPubKey);
 	
+	
+}
+/**
+ * This method will return the transaction object 
+ * This is used by miner
+ * @return transaction object
+ */
+public Transaction getTransaction(){
+	return t;
+}
+
+public String toString(){
+	if(hasReceiverKey()){
+		return t.toString();
+	}
+	else{
+		return "PubKey:"+getAddress()+"\nAmount:"+getAmount();
+	}
 }
 
 
