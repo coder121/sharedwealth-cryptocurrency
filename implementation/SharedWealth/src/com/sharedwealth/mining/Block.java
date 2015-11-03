@@ -4,9 +4,13 @@ import java.util.ArrayList;
 
 import com.sharedwealth.transaction.Transaction;
 
+
+
 public class Block implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 	private final String MaginNo = "0xD9B4BEF9";
-	private double blockSize;
+	private int blockSize;
     private BlockHeader blockHeader;
 	private int transactionCounter;// no of transactions in the block
 	private ArrayList<Transaction> transactions; // list of transactions
@@ -17,10 +21,14 @@ public class Block implements Serializable{
 		transactions = new ArrayList<Transaction>();
 		transactionCounter = 0;
 		blockHeader=new BlockHeader(transactions);
+		blockSize=1;//setting the default size of block to 1
 	}
 
-	public double getBlockSize() {
+	public int getBlockSize() {
 		return blockSize;
+	}
+	public void setBlockSize(int size) {
+		this.blockSize = size;
 	}
 
 	public String getPoofOfWorkSol() {

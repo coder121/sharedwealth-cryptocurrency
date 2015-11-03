@@ -14,14 +14,17 @@ import com.sharedwealth.transaction.Transaction;
 public class Miner implements Serializable {
 
 	// for I/O
-	private ObjectInputStream sInput;		// to read from the socket
-	private ObjectOutputStream sOutput;		// to write on the socket
-	private Socket socket;
+	
+	
+	/**
+	 * 
+	 */
+UUID uuid;
+
 	private Block block;
-	private String server;
-	private int port;
-	 private Transaction t;
+	
 	 private ProofOfWork pw;
+	 private static boolean hasSolvedPOW=false;
 	/*
 	 *  Constructor called by console mode
 	 *  server: the server address
@@ -33,23 +36,50 @@ public class Miner implements Serializable {
 	public Miner() {
 		
 		block=new Block();
-		pw=new ProofOfWork();
+	
+		uuid=UUID.randomUUID();
+		
 		}
+	
+	public UUID getUUID() {
+		return uuid;
+	}
 	
 public void addTransactionToBlock(Transaction t){
 	block.addTransaction(t);
 }
 
-public int getBlockDetails(){
+public int getCurrentBlockSize(){
 	return block.getTrasactionCounter();
+}
+public int getBlockSize(){
+	return block.getBlockSize();
 }
 public String getMerkleRoot(){
 	
 	return block.getMerkRootOfBlock(block.getTransactions());
 }
 public String getProofOfWork(String header){
-	return pw.compute(header);
+	setHasSolvedPOW(true);
+	return ProofOfWork.compute(header);
 }
+public void setBlockSize(int size){
+	block.setBlockSize(size);
+}
+
+public static boolean isHasSolvedPOW() {
+	return hasSolvedPOW;
+}
+public void setHasSolvedPOW(boolean flag) {
+	hasSolvedPOW = flag;
+}
+public String toString(){
+	
+	return"Id:"+getUUID()+"\nSolved:"+isHasSolvedPOW()+"\nBlockSize:"+getCurrentBlockSize();
+	
+	
+}
+
 
 	
 	
