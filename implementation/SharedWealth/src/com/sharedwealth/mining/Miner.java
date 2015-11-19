@@ -13,38 +13,39 @@ import com.sharedwealth.transaction.Transaction;
  */
 public class Miner implements Serializable {
 
-	// for I/O
-	
-	
+
 	/**
 	 * 
 	 */
-UUID uuid;
-
+	private static final long serialVersionUID = 1L;
+	private int id;
 	private Block block;
-	
-	 private ProofOfWork pw;
-	 private static boolean hasSolvedPOW=false;
-	/*
-	 *  Constructor called by console mode
-	 *  server: the server address
-	 *  port: the port number
-	 *  username: the username
-	 *  transaction:the transaction
-	 */
+	UUID uid;
+//	 private ProofOfWork pw;
+	 private  boolean hasSolvedPOW;
+	 private double balance;
+	 private String pwSolution;
+	 private String blockHash;
+
+
+
+
+
 
 	public Miner() {
 		
 		block=new Block();
-	
-		uuid=UUID.randomUUID();
+		uid=UUID.randomUUID();
+		id=1;
+		hasSolvedPOW=false;
+		balance=0;
 		
 		}
 	
-	public UUID getUUID() {
-		return uuid;
+
+	public void setPwSolution(String pwSolution) {
+		this.pwSolution = pwSolution;
 	}
-	
 public void addTransactionToBlock(Transaction t){
 	block.addTransaction(t);
 }
@@ -61,23 +62,72 @@ public String getMerkleRoot(){
 }
 public String getProofOfWork(String header){
 	setHasSolvedPOW(true);
-	return ProofOfWork.compute(header);
+	String proofWorkSol=ProofOfWork.compute(header);
+	block.setPoofOfWorkSol(proofWorkSol);
+	setBlockHash(header);
+	setPwSolution(proofWorkSol);
+	block.setElapsedTime(ProofOfWork.elapsedTime);
+	
+	return proofWorkSol;
 }
 public void setBlockSize(int size){
 	block.setBlockSize(size);
 }
 
-public static boolean isHasSolvedPOW() {
+public boolean isHasSolvedPOW() {
 	return hasSolvedPOW;
 }
 public void setHasSolvedPOW(boolean flag) {
 	hasSolvedPOW = flag;
 }
+
+public void reward(int amount) {
+	
+	this.balance+=amount;
+}
+
+
+public double getBalance() {
+	return balance;
+}
+public String getPwSolution() {
+	return pwSolution;
+}
+public void setId(int id) {
+	this.id = id;
+}
+public int getId() {
+	return id;
+}
+public String getBlockHash() {
+	return blockHash;
+}
+public void setBlockHash(String blockHash) {
+	this.blockHash = blockHash;
+}
+
 public String toString(){
 	
-	return"Id:"+getUUID()+"\nSolved:"+isHasSolvedPOW()+"\nBlockSize:"+getCurrentBlockSize();
+	return"Id:"+getId()+"\nSolved:"+isHasSolvedPOW()+"\nBlockSize:"+getCurrentBlockSize()+"\nSolution:"+getPwSolution()+"\nBlockHash:"+getBlockHash();
 	
 	
+}
+
+
+public UUID getUUID() {
+	// TODO Auto-generated method stub
+	return uid;
+}
+public void setUid(UUID uid) {
+	this.uid = uid;
+}
+public Block getBlock(){
+	return block;
+}
+
+
+public void resetBlockSize(){
+	block.setBlockSize(0);
 }
 
 

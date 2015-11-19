@@ -11,8 +11,10 @@ import com.sharedwealth.util.Util;
  */
 public class ProofOfWork implements Serializable {
 	
-	public static int difficulty=2;//This specify the target
+	public static int difficulty=1;//This specify the target
 	static int resultantNonce=0;
+	static String headers;
+	static double elapsedTime;
 
 	
 /**
@@ -39,8 +41,10 @@ public static int getNonce() {
 		double startTime=System.currentTimeMillis();
 		int nonce=0;
 	    Boolean flag=true;
+	    
 	    Boolean found=false;
 	    String result="";
+	    setHeaders(header);
 	    while(flag){		
 	    String newHeader=header+nonce;
 	    
@@ -50,19 +54,26 @@ public static int getNonce() {
 	    
 		if(result.startsWith(getTarget())){
 			double stopTime=System.currentTimeMillis();
-			double elapsedTime=stopTime-startTime;//finding the totalTime
+			setElapsedTime((stopTime-startTime)/1000);//finding the totalTime
 			System.out.println("DifficultLevel:"+difficulty+"\nSolution:\n"+"Nonce:"+nonce+"\nResult:"+result);
-			System.out.println("Elapsed Time:"+(elapsedTime/1000)+"s");
+			System.out.println("Elapsed Time:"+elapsedTime+"s");
 			flag=false;
 			resultantNonce=nonce;
-			return nonce+":"+result;
+			return nonce+":"+result+":";
 		}
 		nonce++;
 	    }
 	  
-	return "Solution:\n"+"Nonce:"+nonce+"\nResult:"+result;
+	return nonce+":"+result;
 		
 	}
+	private static void setElapsedTime(double time) {
+	// TODO Auto-generated method stub
+		elapsedTime=time;
+	
+}
+	
+	
 	/**
 	 * This method creates a target string i.e String consisting of zeros based
 	 * on difficulty 
@@ -81,6 +92,8 @@ public static int getNonce() {
 		return difficulty;
 		
 	}
+	
+	
 	/**
 	 * This method is to verify the work done by the miner. 
 	 * It verifies whether the solution found by the miner is valid
@@ -97,6 +110,14 @@ public static int getNonce() {
 		}
 		return false;
 		
+	}
+	
+	public static void setHeaders(String headers) {
+		ProofOfWork.headers = headers;
+	}
+	
+	public static String getHeaders() {
+		return headers;
 	}
 	
 	

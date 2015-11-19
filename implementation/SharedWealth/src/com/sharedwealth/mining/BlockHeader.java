@@ -16,10 +16,10 @@ import com.sharedwealth.util.Util;
 public class BlockHeader implements Serializable {
 	private int blockVersionNo;
 	private byte[] hashPrevBlock;
-	private byte[] hashMerkleRoot;//hash of all the hashes 
+	private String hashMerkleRoot;//hash of all the hashes 
 	private SimpleDateFormat dateFormat;
 	private byte[] difficulty;
-	private int nonce=0;
+	
 	private String dateTime;
 	ArrayList<Transaction> transactions;
 	
@@ -35,11 +35,8 @@ public BlockHeader(ArrayList<Transaction> transactions) {
 }
 
 
-public void setNonce(int nonce) 
-{
-	this.nonce = nonce;
-}
-public void setHashMerkleRoot(byte[] hashMerkleRoot)
+
+public void setHashMerkleRoot(String hashMerkleRoot)
 {
 	this.hashMerkleRoot = hashMerkleRoot;
 }public int getBlockVersionNo() 
@@ -57,7 +54,12 @@ public String getHashMerkleRoot(ArrayList<Transaction> transactions) {
 		merkleRoot+=hash;
 	}
 	merkleRoot=Util.getHash(merkleRoot);
+	setHashMerkleRoot(merkleRoot);
+	
 	return new String(merkleRoot);
+}
+public String getHashMerkleRoot(){
+	return hashMerkleRoot;
 }
 
 	
