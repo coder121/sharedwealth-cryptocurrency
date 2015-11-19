@@ -7,6 +7,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,8 +41,10 @@ public class BitcoinNetwork {
 	//false means the transaction is not added to the block
 	private HashMap<Transaction, Boolean> transactionPool;
 	private SimpleDateFormat sdf;
-	private HashMap<Long, Integer> rewardStructure;
+	private HashMap<Integer, Integer> rewardStructure;
+	private HashMap<Integer, String> timeSpent;
 	private ArrayList<Block> blockchain;
+	private ArrayList<Integer> minerRewardIDs;
 	
 	private int port;
 	// the boolean that will be turned of to stop the server
@@ -50,6 +53,7 @@ public class BitcoinNetwork {
 	private int rewardCount=1;
 	private int uId;
 	private String solution;
+	
 	
 
 	
@@ -64,12 +68,30 @@ public class BitcoinNetwork {
 		miner=new HashSet<>();
 		transactionPool=new HashMap<>();
 		rewardStructure=new HashMap<>();
+		initializeRewardStructure(6);
+		timeSpent=new HashMap<>();
+		intializeTimeSpend(6);
 		setHasRewarded(false);
 		uId=0;
 		solution=null;
+		minerRewardIDs=new ArrayList<>();
 		blockchain=new ArrayList<>();
 		}
 	
+	private void intializeTimeSpend(int noOfMiners) {
+		for(int i=1;i<=noOfMiners;i++)
+			timeSpent.put(i, "");
+			
+		}
+		
+	
+
+	private void initializeRewardStructure(int noOfMiners) {
+		for(int i=1;i<=noOfMiners;i++)
+		rewardStructure.put(i, 0);
+		
+	}
+
 	public void start() {
 		keepGoing = true;
 		
@@ -185,6 +207,7 @@ public class BitcoinNetwork {
 		Miner m;
 		String date;
 		User2 newUser;
+		private int counter=0;
 
 		// Constructor
 		ClientThread(Socket socket) {
@@ -236,10 +259,44 @@ public class BitcoinNetwork {
 				//if the object is a miner than the network sends all the transactions 
 				//to the miner. So miner can record them in a block
 					else if(o instanceof Block){
+						
 						display("Adding to BlockChain");
+						
+//						if(counter==blockchain.size()){
 						Block b=(Block)o;
+//			            blockchain.add(b);
+						//to reward the first miner
+						if(counter==minerRewardIDs.size()){
+							minerRewardIDs.add(b.getMinerID());
+							rewardStructure.put(b.getMinerID(),rewardStructure.get(b.getMinerID())+1);
+							}
+					try {
+							Thread.sleep(2000);
+//														sInput.reset();
+						counter=minerRewardIDs.size();
+					} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+					}
+						
 						display("POW SOl from Block:"+b.getPoofOfWorkSol());
+						display("Block ID:"+b.getBlockId());
+						display("Miner ID:"+b.getMinerID());
 						blockchain.add(b);//adding the block to blockchain
+						timeSpent.put(b.getMinerID(),timeSpent.get(b.getMinerID())+","+b.getElapsedTime());
+//						if(counter==minerRewardIDs.size()){
+/*						try {
+							Thread.sleep(2000);
+//							sInput.reset();
+							counter=blockchain.size();
+						} catch (InterruptedException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}*/
+						
+						
+//					}
+						
 					}
 					else if(o instanceof Miner){
 						m=(Miner)o;
@@ -301,7 +358,14 @@ public class BitcoinNetwork {
 						}
 					}
 					display("BlockChain Size:"+blockchain.size());	
+					blockChainInfo();
+					displayWinnerIDS();
+					
+					display(rewardStructure.toString());
+//					display(timeSpent.toString());
+					
 				}
+			
 				
 				// Switch on the type of message receive
 				
@@ -321,10 +385,44 @@ public class BitcoinNetwork {
 			close();
 		}
 		
-		private void broadcastToMiner(User2 user) {
+		private void displayWinnerIDS() {
+			int i=1;
+			for(Integer id:minerRewardIDs){
+			System.out.println(i+". MinerID:"+id);
+			i++;
+			}
+			
+		}
+
+		private void blockChainInfo() {
+			System.out.println("BlockChain Size:"+blockchain.size());
+		/*	for (Block b: blockchain){
+				display("BlockID:"+b.getBlockId()+
+						"\nMinerID:"+b.getMinerID()+
+						"\nElapsedTime:"+b.getElapsedTime()+
+						"\nPOW:"+b.getPoofOfWorkSol());
+				
+				System.out.println(b.getMinerID()+
+						","+b.getElapsedTime());
+				
+			}*/
+			   for (Integer key : timeSpent.keySet()) {
+			        System.out.println(key +","+timeSpent.get(key));
+			    }
+			
+			
+		}
+
+		private synchronized void  broadcastToMiner(User2 user) {
 			display("Here in broadcastMiner");
+			display("ClentThreadSize:"+al.size());
+			Collections.shuffle(al);//to randomize sending the transaction
+			Collections.shuffle(al);
+			Collections.shuffle(al);
 			if(miner.size()>0){
+				
 				for(ClientThread ct:al){
+					System.out.println("ThreadID:"+ct.getId());
 					try {
 						ct.sOutput.writeObject(user.getTransaction());
 					} catch (IOException e) {
